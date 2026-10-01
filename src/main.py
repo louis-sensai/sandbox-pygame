@@ -27,9 +27,14 @@ clock = pygame.time.Clock()
 # Fonts
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("comicsansms", 35)
+fps_font = pygame.font.SysFont("comicsansms", 20)
 
 def score(score):
     value = score_font.render(f"Score: {score}", True, BLUE)
+    screen.blit(value, [0, 0])
+
+def fps(fps_value):
+    value = fps_font.render(f"FPS: {int(fps_value)}", True, WHITE)
     screen.blit(value, [0, 0])
 
 def message(msg, color):
@@ -106,6 +111,7 @@ def game_loop():
             pygame.draw.rect(screen, GREEN, [segment[0], segment[1], BLOCK_SIZE, BLOCK_SIZE])
 
         score(Length_of_snake - 1)
+        fps(clock.get_fps())
         pygame.display.update()
 
         # Handle pear spawning - only spawn if not currently on screen
