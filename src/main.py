@@ -48,6 +48,9 @@ def game_loop():
     # Initialize snake with starting segments
     for i in range(Length_of_snake):
         snake_List.append([x1 - i * BLOCK_SIZE, y1])
+    
+    # Move head to the last segment to avoid collision
+    x1, y1 = snake_List[-1][0], snake_List[-1][1]
     foodx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
     foody = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
 
@@ -62,6 +65,7 @@ def game_loop():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         game_over = True
+                        game_close = False
                     if event.key == pygame.K_c:
                         game_loop()
 
