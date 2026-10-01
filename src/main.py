@@ -15,10 +15,12 @@ BLACK = (22, 22, 22)
 RED = (213, 50, 80)
 GREEN = (0, 255, 0)
 BLUE = (50, 153, 213)
+YELLOW = (255, 255, 0)  # Pear color
 
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Snake Game')
+fps_counter = "Snake Game"
 
 # Clock
 clock = pygame.time.Clock()
@@ -26,10 +28,13 @@ clock = pygame.time.Clock()
 # Fonts
 font_style = pygame.font.SysFont("bahnschrift", 25)
 score_font = pygame.font.SysFont("comicsansms", 35)
+fps_font = pygame.font.SysFont("comicsansms", 20)
 
 def score(score):
     value = score_font.render(f"Score: {score}", True, BLUE)
     screen.blit(value, [0, 0])
+
+
 
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
@@ -46,6 +51,9 @@ def game_loop():
     Length_of_snake = 1
     foodx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
     foody = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
+    pearx = -1
+    pearly = -1
+    pear_spawn_chance = 0.005  # 0.5% chance per frame to spawn a pear (slower spawn rate)
 
     while not game_over:
         while game_close:
@@ -95,16 +103,40 @@ def game_loop():
 
         screen.fill(BLACK)
         pygame.draw.circle(screen, RED, [foodx + BLOCK_SIZE//2, foody + BLOCK_SIZE//2], BLOCK_SIZE//2)
+        # Draw pear if it exists
+        if pearx != -1 and pearly != -1:
+            pygame.draw.circle(screen, YELLOW, [pearx + BLOCK_SIZE//2, pearly + BLOCK_SIZE//2], BLOCK_SIZE//2)
         for segment in snake_List:
             pygame.draw.rect(screen, GREEN, [segment[0], segment[1], BLOCK_SIZE, BLOCK_SIZE])
 
         score(Length_of_snake - 1)
+        fps_counter = f"Snake Game | {int(clock.get_fps())} fps"
+        pygame.display.set_caption(fps_counter)
         pygame.display.update()
 
+        # Handle pear spawning - only spawn if not currently on screen
+        # Don't spawn pear if it was just eaten (avoid immediate respawn)
+        if pearx == -1 and pearly == -1:
+            if random.random() < pear_spawn_chance:
+                pearx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
+                pearly = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
+
+        # Check if snake eats food
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
             foody = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
             Length_of_snake += 1
+            score(Length_of_snake - 1)
+
+        # Check if snake hits pear (removes body parts, no score)
+        elif x1 == pearx and y1 == pearly:
+            # Remove 1-3 segments from snake body
+            segments_to_remove = random.randint(1, 3)
+            if Length_of_snake > segments_to_remove:
+                Length_of_snake -= segments_to_remove
+            # Pear is eaten, hide it
+            pearx = -1
+            pearly = -1
 
         clock.tick(SPEED)
 
