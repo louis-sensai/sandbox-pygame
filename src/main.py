@@ -1,5 +1,6 @@
 import pygame
 import random
+import sys
 
 # Import local modules
 from snake import Snake
@@ -51,6 +52,10 @@ def game_loop():
             pygame.display.update()
             
             for event in pygame.event.get():
+                if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    game_close = False
+                    pygame.quit()
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         game_over = True
@@ -65,6 +70,8 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 game_over = True
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     snake.change_direction('LEFT')
