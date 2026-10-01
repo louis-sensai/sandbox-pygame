@@ -44,6 +44,10 @@ def game_loop():
     y1_change = 0
     snake_List = []
     Length_of_snake = 3
+    
+    # Initialize snake with starting segments
+    for i in range(Length_of_snake):
+        snake_List.append([x1 - i * BLOCK_SIZE, y1])
     foodx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
     foody = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
 
