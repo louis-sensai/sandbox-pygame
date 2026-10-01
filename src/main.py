@@ -4,6 +4,7 @@ import random
 # Import local modules
 from snake import Snake
 from food import Food
+from pear import Pear
 from game_window import GameWindow
 from utils import GameUtils
 
@@ -30,6 +31,7 @@ def game_loop():
     # Create game objects
     snake = Snake(BLOCK_SIZE, SPEED)
     food = Food(WIDTH, HEIGHT, BLOCK_SIZE)
+    pear = Pear(WIDTH, HEIGHT, BLOCK_SIZE)
     game_window = GameWindow(WIDTH, HEIGHT, "Snake Game")
     utils = GameUtils()
     clock = pygame.time.Clock()
@@ -37,8 +39,7 @@ def game_loop():
     # Set initial positions
     snake.reset()
     food.reset()
-    pearx = -1
-    pearly = -1
+    pear.reset()
     pear_spawn_chance = 0.005
     
     while not game_over:
@@ -46,7 +47,7 @@ def game_loop():
             game_window.draw()
             utils.draw_message("You lost! Press Q-Quit or C-Play Again", RED, game_window.screen)
             utils.draw_score(snake.length - 1, game_window.screen)
-            game_window.update_fps()
+            game_window.update_fps(clock)
             pygame.display.update()
             
             for event in pygame.event.get():
@@ -55,7 +56,11 @@ def game_loop():
                         game_over = True
                         game_close = False
                     if event.key == pygame.K_c:
-                        game_loop()
+                        # Reset game objects instead of creating new ones
+                        snake.reset()
+                        food.reset()
+                        pear.reset()
+                        game_close = False
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -89,9 +94,8 @@ def game_loop():
         # Draw food
         food.draw(game_window.screen)
         
-        # Draw pear if it exists
-        if pearx != -1 and pearly != -1:
-            pygame.draw.circle(game_window.screen, YELLOW, [pearx + BLOCK_SIZE//2, pearly + BLOCK_SIZE//2], BLOCK_SIZE//2)
+        # Draw pear
+        pear.draw(game_window.screen)
         
         utils.draw_score(snake.length - 1, game_window.screen)
         
@@ -102,10 +106,9 @@ def game_loop():
         
         # Handle pear spawning - only spawn if not currently on screen
         # Don't spawn pear if it was just eaten (avoid immediate respawn)
-        if pearx == -1 and pearly == -1:
+        if pear.x == -1 and pear.y == -1:
             if random.random() < pear_spawn_chance:
-                pearx = round(random.randrange(0, WIDTH - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
-                pearly = round(random.randrange(0, HEIGHT - BLOCK_SIZE) / BLOCK_SIZE) * BLOCK_SIZE
+                pear.spawn()
         
         # Check if snake eats food
         if snake.x == food.x and snake.y == food.y:
@@ -114,14 +117,13 @@ def game_loop():
             utils.draw_score(snake.length - 1, game_window.screen)
         
         # Check if snake hits pear (removes body parts, no score)
-        elif snake.x == pearx and snake.y == pearly:
+        elif pear.is_eaten(snake.x, snake.y):
             # Remove 1-3 segments from snake body
             segments_to_remove = random.randint(1, 3)
             if snake.length > segments_to_remove:
                 snake.length -= segments_to_remove
             # Pear is eaten, hide it
-            pearx = -1
-            pearly = -1
+            pear.reset()
         
         clock.tick(SPEED)
     
