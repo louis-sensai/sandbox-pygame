@@ -76,7 +76,8 @@ def game_loop():
                     y1_change = -BLOCK_SIZE
                     x1_change = 0
                 elif event.key == pygame.K_DOWN:
-                    y1, y1_change = BLOCK_SIZE, 0
+                    y1_change = BLOCK_SIZE
+                    x1_change = 0
 
         if x1 >= WIDTH or x1 < 0 or y1 >= HEIGHT or y1 < 0:
             game_close = True
