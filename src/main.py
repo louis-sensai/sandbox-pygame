@@ -20,6 +20,7 @@ YELLOW = (255, 255, 0)  # Pear color
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Snake Game')
+fps_counter = "Snake Game"
 
 # Clock
 clock = pygame.time.Clock()
@@ -33,9 +34,7 @@ def score(score):
     value = score_font.render(f"Score: {score}", True, BLUE)
     screen.blit(value, [0, 0])
 
-def fps(fps_value):
-    value = fps_font.render(f"FPS: {int(fps_value)}", True, WHITE)
-    screen.blit(value, [0, 0])
+
 
 def message(msg, color):
     mesg = font_style.render(msg, True, color)
@@ -111,7 +110,8 @@ def game_loop():
             pygame.draw.rect(screen, GREEN, [segment[0], segment[1], BLOCK_SIZE, BLOCK_SIZE])
 
         score(Length_of_snake - 1)
-        fps(clock.get_fps())
+        fps_counter = f"Snake Game | {int(clock.get_fps())} fps"
+        pygame.display.set_caption(fps_counter)
         pygame.display.update()
 
         # Handle pear spawning - only spawn if not currently on screen
