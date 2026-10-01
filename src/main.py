@@ -94,7 +94,7 @@ def game_loop():
                 game_close = True
 
         screen.fill(BLACK)
-        pygame.draw.rect(screen, RED, [foodx, foody, BLOCK_SIZE, BLOCK_SIZE])
+        pygame.draw.circle(screen, RED, [foodx + BLOCK_SIZE//2, foody + BLOCK_SIZE//2], BLOCK_SIZE//2)
         for segment in snake_List:
             pygame.draw.rect(screen, GREEN, [segment[0], segment[1], BLOCK_SIZE, BLOCK_SIZE])
 
