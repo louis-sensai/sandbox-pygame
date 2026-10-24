@@ -62,4 +62,4 @@ class Snake:
     
     def draw(self, screen):
         for segment in self.segments:
-            pygame.draw.rect(screen, (0, 255, 0), [segment[0], segment[1], self.block_size, self.block_size])
+            pygame.draw.rect(screen, (138, 43, 226), [segment[0], segment[1], self.block_size, self.block_size])
